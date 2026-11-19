@@ -110,13 +110,42 @@ form.addEventListener('submit', async event => {
 
   try {
     const endpoint = `${configuredUrl.replace(/\/$/, '')}/${plate}`;
-    const response = await fetch(endpoint, { headers: { Accept: 'application/json' } });
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 15000);
+    const response = await fetch(endpoint, {
+      headers: { Accept: 'application/json' },
+      signal: controller.signal
+    });
+    window.clearTimeout(timeout);
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.erro || data.message || 'Não foi possível consultar a placa.');
-    fillResult(plate, data);
-    saveHistory(plate, data);
+    if (!response.ok) {
+      if (response.status === 404) throw new Error('Placa não encontrada ou não disponível no provedor consultado.');
+      if (response.status === 429) throw new Error('Limite de consultas do provedor foi atingido. Tente novamente mais tarde.');
+      throw new Error(data.erro || data.message || `O serviço retornou erro HTTP ${response.status}.`);
+    }
+
+    const normalized = {
+      modelo: data.modelo || data.modeloCarro || data.marcaModelo || data.marca,
+      marcaModelo: data.marcaModelo,
+      marca: data.marca,
+      anoModelo: data.anoModelo || data.ano || data.ano_veiculo,
+      anoFabricacao: data.anoFabricacao,
+      cor: data.cor,
+      municipio: data.municipio || data.municipioEmplacamento,
+      uf: data.uf,
+      chassi: data.chassi || data.numeroChassi,
+      situacao: data.situacao || data.status
+    };
+    fillResult(plate, normalized);
+    saveHistory(plate, normalized);
   } catch (error) {
-    showMessage(error.message || 'Serviço indisponível. Tente novamente mais tarde.');
+    if (error.name === 'AbortError') {
+      showMessage('A consulta demorou demais. Verifique sua conexão e tente novamente.');
+    } else if (error instanceof TypeError) {
+      showMessage('Não foi possível conectar ao serviço de placas. Verifique sua conexão ou se o provedor permite consultas pelo navegador.');
+    } else {
+      showMessage(error.message || 'Não foi possível consultar a placa.');
+    }
   } finally {
     botao.disabled = false;
     botao.textContent = 'Consultar';
