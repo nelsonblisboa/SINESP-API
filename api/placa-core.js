@@ -6,10 +6,10 @@ function normalizePayload(payload) {
     modelo: source.modelo || source.modeloCarro || source.marcaModelo,
     marcaModelo: source.marcaModelo,
     marca: source.marca,
-    anoModelo: source.anoModelo || source.ano,
+    anoModelo: source.anoModelo || source.ano || source.ano_veiculo,
     anoFabricacao: source.anoFabricacao,
     cor: source.cor,
-    municipio: source.municipio,
+    municipio: source.municipio || source.municipioEmplacamento,
     uf: source.uf,
     chassi: source.chassi || source.numeroChassi,
     situacao: source.situacao || source.status
@@ -33,10 +33,13 @@ async function handlePlateRequest(req, res) {
   if (process.env.PLATE_API_TOKEN) headers.Authorization = `Bearer ${process.env.PLATE_API_TOKEN}`;
 
   try {
-    const separator = baseUrl.includes('?') ? '&' : '/';
-    const response = await fetch(`${baseUrl.replace(/\/$/, '')}${separator}${plate}`);
+    const response = await fetch(`${baseUrl.replace(/\/$/, '')}/${plate}`, { headers });
     const payload = await response.json().catch(() => ({}));
-    if (!response.ok) return res.status(response.status).json({ erro: payload.message || payload.erro || 'Placa não encontrada ou serviço indisponível.' });
+    if (!response.ok) {
+      return res.status(response.status >= 400 ? response.status : 502).json({
+        erro: payload.message || payload.erro || 'Placa não encontrada ou serviço indisponível.'
+      });
+    }
     return res.status(200).json(normalizePayload(payload));
   } catch {
     return res.status(502).json({ erro: 'Não foi possível consultar o serviço de placas.' });

@@ -1,43 +1,46 @@
 # Consulta Veicular
 
-Interface estática para consulta de placas brasileira, preparada para GitHub Pages, com proxy opcional em Node.js.
+Interface estática para consulta de placas brasileira, publicada na pasta `docs` e preparada para GitHub Pages.
 
 ## Estrutura
 
-- `docs/index.html`: interface responsiva publicada pelo GitHub Pages
-- `docs/style.css`: estilos da página
-- `docs/config.js`: configuração da URL do backend
+- `docs/index.html`: interface responsiva
+- `docs/style.css`: estilos
+- `docs/config.js`: URL do backend
 - `docs/script.js`: validação, consulta e histórico local
-- `api/placa.js`: proxy serverless compatível com Vercel
+- `api/placa-core.js`: integração normalizada com o provedor
+- `api/placa.js`: handler serverless
 - `server.js`: servidor Express local
-- `package.json`: dependências do backend
 
-## Desenvolvimento local
+## Execução local
 
 ```bash
 npm install
 npm start
 ```
 
-Abra `http://localhost:3000` para a interface e a API em `http://localhost:3000/api/placa/AAA0A00`.
+A interface estará em `http://localhost:3000` e a API em `http://localhost:3000/api/placa/AAA0A00`.
 
-## Publicar no GitHub Pages
+## Configuração do provedor
 
-1. Faça o push deste repositório na branch `main`.
-2. Em **Settings > Pages**, selecione **Deploy from a branch**.
-3. Escolha `main` e a pasta `/docs`.
-4. Configure `docs/config.js` com a URL pública do backend.
-
-GitHub Pages hospeda apenas arquivos estáticos. A consulta precisa de um backend ou provedor externo acessível por CORS.
-
-## Backend
-
-O arquivo `api/placa.js` usa uma API de placas definida pela variável `PLATE_API_URL`. Defina também um valor opcional em `PLATE_API_TOKEN`, enviado como Bearer token.
-
-Exemplo padrão:
+O backend usa `https://brasilapi.com.br/api/placas/v1` por padrão. Para usar outro provedor, configure:
 
 ```text
-PLATE_API_URL=https://brasilapi.com.br/api/placas/v1
+PLATE_API_URL=https://provedor.exemplo/placas
+PLATE_API_TOKEN=token-opcional
 ```
 
-Devido às mudanças e bloqueios das APIs públicas, confirme a disponibilidade e os termos do provedor antes do uso.
+Atenção: APIs públicas podem ter disponibilidade, cobertura e limites diferentes.
+
+## GitHub Pages
+
+1. Em **Settings > Pages**, escolha **Deploy from a branch**.
+2. Selecione `main` e `/docs`.
+3. Hospede o backend separadamente em Vercel ou outro provedor HTTPS.
+4. Ajuste `docs/config.js`:
+
+```javascript
+window.PLATE_API_URL = 'https://seu-backend.exemplo/api/placa';
+```
+
+GitHub Pages não executa Node.js nem elimina as exigências de CORS ou credenciais do provedor externo.

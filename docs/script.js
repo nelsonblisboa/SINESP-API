@@ -109,8 +109,8 @@ form.addEventListener('submit', async event => {
   resultado.classList.add('hidden');
 
   try {
-    const separator = configuredUrl.includes('?') ? '&' : '?';
-    const response = await fetch(`${configuredUrl.replace(/\/$/, '')}/${plate}${configuredUrl.includes('?') ? '' : ''}`, { headers: { Accept: 'application/json' } });
+    const endpoint = `${configuredUrl.replace(/\/$/, '')}/${plate}`;
+    const response = await fetch(endpoint, { headers: { Accept: 'application/json' } });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.erro || data.message || 'Não foi possível consultar a placa.');
     fillResult(plate, data);
