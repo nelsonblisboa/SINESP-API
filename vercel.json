@@ -1,0 +1,5 @@
+{
+  "version": 2,
+  "builds": [{ "src": "api/placa.js", "use": "@vercel/node" }],
+  "routes": [{ "src": "/api/placa/(.*)", "dest": "/api/placa.js?placa=$1" }]
+}

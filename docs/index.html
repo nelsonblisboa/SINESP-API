@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f766e">
+  <title>Consulta Veicular</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <header>
+      <span class="eyebrow">SINESP / Placas</span>
+      <h1>Consulta Veicular</h1>
+      <p>Informe uma placa antiga (AAA-0000) ou Mercosul (AAA0A00).</p>
+    </header>
+
+    <section class="card" aria-labelledby="titulo-busca">
+      <h2 id="titulo-busca" class="sr-only">Buscar placa</h2>
+      <form id="formConsulta">
+        <label for="inputPlaca">Placa do veículo</label>
+        <div class="search-row">
+          <input id="inputPlaca" name="placa" type="text" maxlength="8" autocomplete="off" placeholder="AAA0A00" aria-describedby="ajuda-placa">
+          <button id="botaoConsultar" type="submit">Consultar</button>
+        </div>
+        <p id="ajuda-placa" class="help">Formatos aceitos: AAA-0000 ou AAA0A00</p>
+      </form>
+    </section>
+
+    <section id="resultado" class="card result hidden" aria-live="polite">
+      <div class="result-heading">
+        <div>
+          <span class="label">Placa consultada</span>
+          <strong id="placaResultado">—</strong>
+        </div>
+        <span id="badgeStatus" class="badge">—</span>
+      </div>
+      <dl class="grid">
+        <div><dt>Marca / Modelo</dt><dd id="modelo">—</dd></div>
+        <div><dt>Ano modelo / fabricação</dt><dd id="ano">—</dd></div>
+        <div><dt>Cor</dt><dd id="cor">—</dd></div>
+        <div><dt>Município / UF</dt><dd id="local">—</dd></div>
+        <div><dt>Chassi</dt><dd id="chassi">—</dd></div>
+        <div><dt>Situação</dt><dd id="situacao">—</dd></div>
+      </dl>
+    </section>
+
+    <section id="historicoCard" class="card history hidden">
+      <h2>Consultas recentes</h2>
+      <div id="historico" class="history-list"></div>
+      <button id="limparHistorico" class="text-button" type="button">Limpar histórico</button>
+    </section>
+
+    <div id="mensagem" class="message hidden" role="alert"></div>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
