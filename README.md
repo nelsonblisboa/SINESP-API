@@ -23,11 +23,17 @@ A interface estará em `http://localhost:3000` e a API em `http://localhost:3000
 
 ## Configuração do provedor
 
-O backend usa `https://brasilapi.com.br/api/placas/v1` por padrão. Para usar outro provedor, configure:
+O backend aceita um provedor compatível configurado por `PLATE_API_URL`:
 
 ```text
 PLATE_API_URL=https://provedor.exemplo/placas
 PLATE_API_TOKEN=token-opcional
+```
+
+Também pode usar a APIBrasil com:
+
+```text
+APIBRASIL_TOKEN=token-bearer
 ```
 
 Atenção: APIs públicas podem ter disponibilidade, cobertura e limites diferentes.
